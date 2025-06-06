@@ -1,8 +1,6 @@
+from db.base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Text, Float
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'user'
@@ -14,8 +12,6 @@ class User(Base):
     is_admin = Column(Boolean)
     
     ads = relationship("Ad", back_populates="user")
-
-
 
 class Ad(Base):
     __tablename__ = 'ad'
