@@ -14,3 +14,4 @@ class User(Base):
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
     
     ads = relationship("Ad", back_populates="user")
+    reviews = relationship("Review", back_populates="user")
