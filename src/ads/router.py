@@ -24,6 +24,6 @@ async def read_ads(
     return await utils.get_ads(session, skip=skip, limit=limit)
 
 @router.get("/del_ad", status_code=200)
-async def delete_ads(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_ad(id: int, session: AsyncSession = Depends(get_session)):
     await utils.del_ad(session, id)
     return {"info": "Successfully delete."}
