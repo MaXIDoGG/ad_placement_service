@@ -8,12 +8,12 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str | None = None
 
+class UserBase(BaseModel):
+    login: str
+    name: str | None = None
 
-class UserCreate(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
+class UserCreate(UserBase):
+    password: str
 
 
 class UserInDB(UserCreate):
