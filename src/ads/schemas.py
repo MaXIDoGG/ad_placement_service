@@ -1,12 +1,20 @@
 from pydantic import BaseModel
+from datetime import datetime
 
-class UserBase(BaseModel):
-    login: str
-    name: str | None = None
+class AdBase(BaseModel):
+    type: str
+    name: str
+    description: str
+    price: float
+    image_url: str
 
-class UserCreate(UserBase):
-    password: str
+class AdCreate(AdBase):
+    pass
 
-
-class UserInDB(UserCreate):
-    hashed_password: str
+class Ad(AdBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    
+    class Config:
+        orm_mode = True
