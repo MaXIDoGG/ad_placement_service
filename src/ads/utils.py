@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import Ad
 from models import User
@@ -15,3 +15,8 @@ async def create_ad(session: AsyncSession, ad_data: dict, user: User):
 async def get_ads(session: AsyncSession, skip: int = 0, limit: int = 100):
     result = await session.execute(select(Ad).offset(skip).limit(limit))
     return result.scalars().all()
+
+async def del_ad(session: AsyncSession, id:int):
+    ad = await session.execute(delete(Ad).filter_by(id=id))
+    await session.commit()
+    
