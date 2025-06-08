@@ -6,10 +6,7 @@ services:
     build: ./app
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:pass@postgres:5432/postgres_db
-      - SECRET_KEY=your-secret-key
-      - DEBUG=0
+    env_file: ./.env
     depends_on:
       - postgres
     
@@ -18,11 +15,13 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres_container
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: postgres_db
-      PGDATA: /var/lib/postgresql/data/pgdata
+    env_file: ./.env
+    # environment:
+    #   POSTGRES_USER: postgres
+    #   POSTGRES_PASSWORD: pass
+    #   POSTGRES_DB: postgres_db
+    #   PGDATA: /var/lib/postgresql/data/pgdata
+
     ports:
       - "5432:5432"
     volumes:
