@@ -31,7 +31,7 @@ cd ads-service
 ```
 
 ### 2. Настройка окружения
-Создайте файл .env в корне проекта (пример есть в файле .env.template)
+Создайте файл .env в корне проекта (пример есть в файле [.env.template](https://github.com/MaXIDoGG/ad_placement_service/blob/main/.env.template))
 
 ### 3. Запуск
 ```bash
