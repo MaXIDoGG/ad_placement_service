@@ -7,11 +7,11 @@ from database import init_models, create_admin
 
 app = FastAPI()
 asyncio.create_task(init_models())
-asyncio.create_task(create_admin())
 
 app.include_router(router=auth_router.router)
-app.include_router(router=ads_router.router)
 app.include_router(router=users_router.router)
+app.include_router(router=ads_router.router)
+
 
 
 # if __name__ == '__main__':

@@ -24,6 +24,9 @@ class ReviewBase(BaseModel):
     rating: int = Field(..., ge=1, le=5)
     image_url: str | None = None
     ad_id: int
+    
+class ReviewCreate(ReviewBase):
+    pass
 
     
 class Review(ReviewBase):
