@@ -7,7 +7,7 @@ class User(Base):
     __tablename__ = 'user'
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    login: Mapped[str] = mapped_column(String)
+    login: Mapped[str] = mapped_column(String, unique=True)
     name: Mapped[str] = mapped_column(String)
     password_hash: Mapped[str] = mapped_column(String)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)

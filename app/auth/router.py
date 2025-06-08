@@ -7,8 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import Token, UserCreate
 from .utils import authenticate_user, create_access_token, create_new_user
 from models.base import get_session
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter(tags=["auth"])
 

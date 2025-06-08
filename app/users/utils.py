@@ -1,8 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from models import Ad, User, Review
-from datetime import datetime
+from models import User
 
 async def get_users(session: AsyncSession, skip: int = 0, limit: int = 100):
     result = await session.execute(select(User).offset(skip).limit(limit))
@@ -71,4 +70,3 @@ async def unban_user(session: AsyncSession, user_id):
   await session.commit()
   await session.refresh(user_to_ban)
   return user_to_ban
-    
