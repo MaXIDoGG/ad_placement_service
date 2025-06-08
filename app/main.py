@@ -11,8 +11,3 @@ asyncio.create_task(init_models())
 app.include_router(router=auth_router.router)
 app.include_router(router=users_router.router)
 app.include_router(router=ads_router.router)
-
-
-
-# if __name__ == '__main__':
-#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
