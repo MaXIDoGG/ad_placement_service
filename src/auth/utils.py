@@ -1,30 +1,28 @@
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
-import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
-from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from .schemas import TokenData, UserCreate, UserInDB
-from models.user import User
-from models.base import get_session
+from typing import Annotated
+import bcrypt
+import jwt
+from .schemas import TokenData, UserCreate
+from models import User, get_session
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+def get_password_hash(password: str) -> str:
+        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 async def get_user(session: AsyncSession, login: str) -> User:
@@ -51,6 +49,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
                            session: AsyncSession = Depends(get_session)):
@@ -79,3 +78,34 @@ async def get_current_active_user(
     if current_user.is_banned:
         raise HTTPException(status_code=400, detail="Banned user")
     return current_user
+
+
+async def get_active_admin_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.is_banned:
+        raise HTTPException(status_code=400, detail="Banned user")
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="User isn't admin")
+    return current_user
+
+async def create_new_user(user_data: UserCreate, session: AsyncSession):
+
+    existing_user = await get_user(session, user_data.login)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Login already registered"
+        )
+    
+    hashed_password = get_password_hash(user_data.password)
+    
+    new_user = User(
+        login=user_data.login,
+        name=user_data.name,
+        password_hash=hashed_password,
+    )
+    
+    session.add(new_user)
+    await session.commit()
+    return new_user

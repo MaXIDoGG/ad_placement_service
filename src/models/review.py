@@ -1,13 +1,12 @@
 
-from sqlalchemy import Integer, String, ForeignKey, Text, Float, DateTime
+from sqlalchemy import Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .base import Base
-from .user import User
 
 class Review(Base):
-    __tablename__ = 'ad'
+    __tablename__ = 'review'
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     text: Mapped[str] = mapped_column(String, nullable=True)

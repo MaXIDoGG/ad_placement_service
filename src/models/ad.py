@@ -19,3 +19,4 @@ class Ad(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
     
     user = relationship("User", back_populates="ads")
+    reviews = relationship("Review", back_populates="ad")
