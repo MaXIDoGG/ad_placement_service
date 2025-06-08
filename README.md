@@ -27,7 +27,7 @@
 ### 1. Клонирование репозитория
 ```bash
 git clone https://github.com/MaXIDoGG/ad_placement_service
-cd ads-service
+cd ad_placement_service
 ```
 
 ### 2. Настройка окружения
@@ -35,7 +35,7 @@ cd ads-service
 
 ### 3. Запуск
 ```bash
-docker-compose up -d --build
+docker-compose up --build
 ```
 
 Сервис будет доступен по адресу:
