@@ -188,4 +188,4 @@ cython_debug/
 .pypirc
 
 # PostgreSQL
-/pgdata/
+.pgdata/
