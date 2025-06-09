@@ -1,7 +1,7 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from models import Ad, User, Review
+from models import Ad, User, Review, Complaint
 from typing import Optional, List, Union
 from datetime import datetime
 from fastapi import HTTPException, status
@@ -93,6 +93,32 @@ async def create_review(session: AsyncSession, review_data: dict, user: User) ->
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Database error: {str(e)}"
         )
+        
+async def create_complaint(session: AsyncSession, complaint_data: dict, user: User) -> Review:
+    try:
+        ad = await get_ad_by_id(session=session, ad_id=complaint_data.get("ad_id"))
+        if not ad:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Ad not found"
+            )
+            
+        complaint = Complaint(
+            **complaint_data,
+            created_at=datetime.now(),
+            user_id=user.id
+        )
+        
+        session.add(complaint)
+        await session.commit()
+        await session.refresh(complaint)
+        return complaint
+    except SQLAlchemyError as e:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Database error: {str(e)}"
+        )
 
 async def get_review_by_id(session: AsyncSession, review_id: int) -> Optional[Review]:
     try:
@@ -112,6 +138,17 @@ async def get_reviews_by_ad_id(session: AsyncSession, ad_id: int) -> Optional[Li
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database error: {str(e)}"
         )
+
+async def get_complaints_by_ad_id(session: AsyncSession, ad_id: int) -> Optional[List[Complaint]]:
+    try:
+        ad = await get_ad_by_id(session=session, ad_id=ad_id)
+        return ad.complaints if ad else None
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error: {str(e)}"
+        )
+
 
 async def delete_review(session: AsyncSession, review_id: int, user: User) -> None:
     try:

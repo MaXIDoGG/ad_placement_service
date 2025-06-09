@@ -40,3 +40,21 @@ class Review(ReviewBase):
     
     class Config:
         from_attributes = True
+        
+
+class ComplaintBase(BaseModel):
+    text: str
+    image_url: str | None = None
+    
+class ComplaintCreate(ComplaintBase):
+    pass
+
+    
+class Complaint(ComplaintBase):
+    id: int
+    ad_id: int
+    user_id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

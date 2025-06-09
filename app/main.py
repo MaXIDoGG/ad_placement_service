@@ -3,7 +3,7 @@ import asyncio
 from auth import router as auth_router
 from ads import router as ads_router
 from users import router as users_router
-from database import init_models, create_admin
+from database import init_models
 
 app = FastAPI()
 asyncio.create_task(init_models())

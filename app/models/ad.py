@@ -27,3 +27,4 @@ class Ad(Base):
     
     user = relationship("User", back_populates="ads", lazy="selectin")
     reviews = relationship("Review", back_populates="ad", lazy="selectin")
+    complaints = relationship("Complaint", back_populates="ad", lazy="selectin")

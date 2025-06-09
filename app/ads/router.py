@@ -4,7 +4,7 @@ from typing import List
 from datetime import datetime
 
 from . import schemas, utils
-from auth.utils import get_current_active_user
+from auth.utils import get_current_active_user, get_active_admin_user
 from models import get_session
 from models import User
 
@@ -121,6 +121,54 @@ async def create_review(
             detail=f"Failed to create review: {str(e)}"
         )
 
+        
+@router.get("/{ad_id}/complaints", response_model=List[schemas.Complaint])
+async def get_complaints_by_ad_id(
+    ad_id: int,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_active_admin_user)
+):
+    try:
+        complaints = await utils.get_complaints_by_ad_id(session=session, ad_id=ad_id)
+        if not complaints:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No complaints found for this ad"
+            )
+        return complaints
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch complaints: {str(e)}"
+        )
+
+@router.post("/{ad_id}/complaints", response_model=schemas.Complaint, status_code=status.HTTP_201_CREATED)
+async def create_complaint(
+    ad_id: int,
+    complaint: schemas.ComplaintCreate,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    try:
+        # Check if ad exists
+        ad = await utils.get_ad_by_id(session=session, ad_id=ad_id)
+        if not ad:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Ad not found"
+            )
+            
+        complaint_data = complaint.model_dump()
+        complaint_data["ad_id"] = ad_id
+        return await utils.create_complaint(session=session, complaint_data=complaint_data, user=current_user)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create complaint: {str(e)}"
+        )
+
 @router.get("/reviews/{review_id}", response_model=schemas.Review)
 async def get_review_by_id(
     review_id: int,
@@ -141,7 +189,7 @@ async def delete_review(
     current_user: User = Depends(get_current_active_user)
 ):
     try:
-        await utils.delete_review(session=session, review_id=review_id, user_id=current_user.id)
+        await utils.delete_review(session=session, review_id=review_id, user=current_user)
         return {"detail": "Review successfully deleted"}
     except HTTPException:
         raise
