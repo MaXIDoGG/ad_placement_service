@@ -114,7 +114,7 @@ async def get_reviews_by_ad_id(session: AsyncSession, ad_id: int) -> Optional[Li
             detail=f"Database error: {str(e)}"
         )
 
-async def delete_review(session: AsyncSession, review_id: int, user_id: int) -> None:
+async def delete_review(session: AsyncSession, review_id: int, user: User) -> None:
     try:
         review = await get_review_by_id(session=session, review_id=review_id)
         if not review:
@@ -123,7 +123,7 @@ async def delete_review(session: AsyncSession, review_id: int, user_id: int) -> 
                 detail="Review not found"
             )
             
-        if review.user_id != user_id:
+        if review.user_id != user.id and not user.is_admin:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You can only delete your own reviews"
