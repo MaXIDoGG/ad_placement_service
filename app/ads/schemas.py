@@ -23,7 +23,6 @@ class ReviewBase(BaseModel):
     text: str
     rating: int = Field(..., ge=1, le=5)
     image_url: str | None = None
-    ad_id: int
     
 class ReviewCreate(ReviewBase):
     pass
@@ -31,6 +30,7 @@ class ReviewCreate(ReviewBase):
     
 class Review(ReviewBase):
     id: int
+    ad_id: int
     user_id: int
     created_at: datetime
     
