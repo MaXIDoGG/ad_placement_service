@@ -1,12 +1,19 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+from models import AdType
+
 class AdBase(BaseModel):
-    type: str
+    type: AdType = Field(default=AdType.SALE)
     name: str
     description: str
     price: float
     image_url: str
+
+    class Config:
+        use_enum_values = True
+        from_attributes = True
+
 
 class AdCreate(AdBase):
     pass
@@ -15,9 +22,6 @@ class Ad(AdBase):
     id: int
     user_id: int
     created_at: datetime
-    
-    class Config:
-        from_attributes = True
 
 class ReviewBase(BaseModel):
     text: str

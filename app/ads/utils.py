@@ -70,7 +70,6 @@ async def delete_ad(session: AsyncSession, ad_id: int, user: User) -> None:
 
 async def create_review(session: AsyncSession, review_data: dict, user: User) -> Review:
     try:
-        # Check if ad exists
         ad = await get_ad_by_id(session=session, ad_id=review_data.get("ad_id"))
         if not ad:
             raise HTTPException(

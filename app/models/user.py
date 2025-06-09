@@ -13,5 +13,5 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    ads = relationship("Ad", back_populates="user")
-    reviews = relationship("Review", back_populates="user")
+    ads = relationship("Ad", back_populates="user", lazy="selectin")
+    reviews = relationship("Review", back_populates="user", lazy="selectin")
